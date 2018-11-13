@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+
+  </head>
+    <body>
+      <input id="location" type="text" placeholder="Enter Location" onchange="getWeather()">
+
+      <h1 id="temp"></h1>
+      <h3 id="summary"></h3>
+      <img id="icon" src="" style="width: 300px; height: 300px;">
+      <script>
+        function getWeather(){
+
+          document.getElementById('icon').src = 'https://media1.tenor.com/images/db85ba00c6073b451a8f05156a66524e/tenor.gif';
+          var location = document.getElementById('location').value;
+          fetch('https://api.opencagedata.com/geocode/v1/json?q='+location+'&key=f3a737b4424f4f6cb59bd14e6fe71886')
+          .then(function(response){ return response.json() })
+          .then(function(data){
+            console.log(data.results[0].bounds.northeast);
+            var latitude = data.results[0].bounds.northeast.lat;
+            var longitude = data.results[0].bounds.northeast.lng;
+            weatherApi(latitude, longitude);
+          })
+        }
+
+        function weatherApi(lat, lng){
+          fetch(`https://cors-anywhere.herokuapp.com/https://cors-anywhere.herokuapp.com/https://api.darksky.net/forecast/93439cb9a942bf3f204da92aaa5a4eb9/${lat},${lng}`)
+          .then(function(response){ return response.json() })
+          .then(function(data){
+            console.log(data)
+            displayWeather(data.currently.temperature, data.currently.summary);
+          })
+        }
+
+        function displayWeather(temp, summary){
+          var location = document.getElementById('location').value;
+          document.getElementById('temp').innerHTML = location + ' is ' + temp + ' Degrees Fah';
+          document.getElementById('summary').innerHTML = summary;
+          //0: Sunny, 1: Clear, 2: Cloud, 3: Rain, 4: Snow
+          var images =[
+            'https://thumbs.gfycat.com/SeparateElatedHairstreakbutterfly-size_restricted.gif',
+            'https://cloud.lovinmalta.com/images/uploads/2016/10/_blogWide/ma-niflahhiex-izjed.gif?mtime=20161019222848',
+            'http://78.media.tumblr.com/32c944d4aad5d061e8c6b54db0f078c6/tumblr_mjvtwn8FBK1ql98f7o1_500.gif',
+            'https://i.giphy.com/media/uByJc8jmPlayk/giphy.webp',
+            'https://i.giphy.com/media/3o6ZsUJ0Ry3ahJF16w/giphy.webp',
+          ];
+          var icon = document.getElementById('icon');
+          if(summary.toLowerCase().includes('sun') ){
+            icon.src = images[0];
+          }else if(summary.toLowerCase().includes('clear')){
+            icon.src = images[1];
+          }else if(summary.toLowerCase().includes('cloud')){
+            icon.src = images[2];
+          }else if(summary.toLowerCase().includes('rain')){
+            icon.src = images[3];
+          }else if(summary.toLowerCase().includes('snow')){
+            icon.src = images[4];
+          }else{
+            icon.src = '';
+          }
+
+        }
+      </script>
+
+    </body>
+</html>
